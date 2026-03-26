@@ -122,4 +122,15 @@ hipotesis_final <- hipotesis_final |>
     indicator_name = "Proporción de la población que usa internet (%)")
 ```
 
+## EXPORTACION DEL ENTREGABLE FINAL
+```{r}
+dir.create("../output", showWarnings = FALSE)
+
+file_name = file.path("../output","archivo_final")
+
+write_csv(hipotesis_final, paste0(file_name,".csv"))
+
+saveRDS(hipotesis_final, paste0(file_name,".rds"))
+```
+
 
