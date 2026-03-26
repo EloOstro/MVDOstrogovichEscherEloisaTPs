@@ -52,6 +52,7 @@ metadata <- funcion_df(metadata)
 
 ## 2. PIVOTEO
 ```{r}
+# Pasar la tabla a formato long
 internet_long <- internet %>%
   pivot_longer(
     cols = starts_with("x"),
@@ -59,25 +60,29 @@ internet_long <- internet %>%
     values_to = "internet_users")
 ```
 
-```{r}
+```{r} 
+# Saco las x de year
 internet_long = internet_long |>
   mutate(year = as.numeric(gsub("x", "", year)))
 ```
 
 ## 3. TRATAMIENTO DE NAs
 ```{r}
+# Limpieza de NA
 internet_long <- internet_long %>%
   filter(!is.na(internet_users))
 ```
 
 ## 4. CRUCE DE DATOS
 ```{r}
+# Cruzar los datos de ambas tablas, segun el nombre de las variables iguales
 datos_df = internet_long |> 
   left_join(metadata, by = c("country_name" = "table_name","country_code" = "country_code"))
 ```
 
 ## 5. AGREGACION
 ```{r}
+# Calcular las metricas para la tabla
 hipotesis <- datos_df |> filter(year >= 2013 & year <=2023) |> filter(income_group %in% c("Low income", "Lower middle income", "Upper middle income", "High income")) |>
 group_by(region, year, income_group) |> 
   summarize(
@@ -85,6 +90,36 @@ group_by(region, year, income_group) |>
     .groups = "drop")
 ```
 
+## CREACION DE TABLA PARA EL ENTREGABLE FINAL
+```{r}
+# Armar tabla inicial, dividida por nivel ingreso
+hipotesis_final <- datos_df |>
+  filter(
+    year >= 2013 & year <= 2023,
+    income_group %in% c(
+      "Low income",
+      "Lower middle income",
+      "Upper middle income",
+      "High income")) |>
+  group_by(year, income_group) |>
+  summarize(
+    promedio_internet = mean(internet_users, na.rm = TRUE),
+    .groups = "drop")
+```
 
+```{r}
+# Pivotear a formato wide
+hipotesis_final <- hipotesis_final |>
+  pivot_wider(
+    names_from = income_group,
+    values_from = promedio_internet)
+```
+
+```{r}
+# Agregar a la tabla el normbre del indicador
+hipotesis_final <- hipotesis_final |>
+  mutate(
+    indicator_name = "Proporción de la población que usa internet (%)")
+```
 
 
