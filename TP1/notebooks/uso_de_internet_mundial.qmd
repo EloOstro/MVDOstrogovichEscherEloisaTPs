@@ -14,13 +14,13 @@ library(stringi)
 
 ```{r}
 path_int = "../data/internet_users_world_wide.csv"
-internet = read_csv(path_int)
+internet = read_csv(path_int, skip = 4)
 
 path_met = "../data/metadata_countries_internet_users.csv"
 metadata = read_csv(path_met)
 ```
 
-## NORMALIZAR DATOS
+## 1. NORMALIZAR DATOS
 ```{r}
 #Funcion para normalizar los datos
 funcion_df = function(dataframe, clean = TRUE, which_remove = "cols") {
@@ -50,8 +50,14 @@ internet <- funcion_df(internet)
 metadata <- funcion_df(metadata)
 ```
 
-## PIVOTEO
+## 2. PIVOTEO
 ```{r}
-
+internet_long <- internet %>%
+  pivot_longer(
+    cols = starts_with("x"),
+    names_to = "year",
+    values_to = "internet_users")
 ```
+
+
 
