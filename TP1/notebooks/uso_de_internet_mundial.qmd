@@ -1,0 +1,57 @@
+---
+title: "Uso de internet mundial"
+format: html
+editor: visual
+---
+
+## PAQUETES Y DATOS
+```{r}
+library(tidyverse)
+library(janitor)
+library(stringi)
+```
+
+
+```{r}
+path_int = "../data/internet_users_world_wide.csv"
+internet = read_csv(path_int)
+
+path_met = "../data/metadata_countries_internet_users.csv"
+metadata = read_csv(path_met)
+```
+
+## NORMALIZAR DATOS
+```{r}
+#Funcion para normalizar los datos
+funcion_df = function(dataframe, clean = TRUE, which_remove = "cols") {
+  if (clean) {
+    data_clean = clean_names(dataframe)
+  } else {
+    data_clean = dataframe
+  }
+  
+  if (which_remove == "both") {
+    data_clean = data_clean |> 
+      janitor::remove_empty(which = 'cols') %>% 
+      janitor::remove_empty(which = 'rows')
+  } else {
+    data_clean = janitor::remove_empty(data_clean, which = which_remove)
+  }
+  
+  return(data_clean)
+}
+
+funcion_df(internet, clean = FALSE, which_remove = 'both')
+```
+
+```{r}
+#Normalizar datos
+internet <- funcion_df(internet)
+metadata <- funcion_df(metadata)
+```
+
+## PIVOTEO
+```{r}
+
+```
+

@@ -31,3 +31,16 @@ internet_long <- internet_long %>%
 datos <- internet_long %>%
   left_join(metadata, by = "Country Code")
 
+## HIPOTESIS ##
+hipotesis <- datos %>%
+  group_by(year, IncomeGroup) %>%
+  summarize(promedio_internet = mean(usuarios_internet, na.rm = TRUE))
+
+hipotesis_wide <- hipotesis %>%
+  pivot_wider(
+    names_from = IncomeGroup,
+    values_from = promedio_internet)
+
+
+
+
