@@ -59,5 +59,32 @@ internet_long <- internet %>%
     values_to = "internet_users")
 ```
 
+```{r}
+internet_long = internet_long |>
+  mutate(year = as.numeric(gsub("x", "", year)))
+```
+
+## 3. TRATAMIENTO DE NAs
+```{r}
+internet_long <- internet_long %>%
+  filter(!is.na(internet_users))
+```
+
+## 4. CRUCE DE DATOS
+```{r}
+datos_df = internet_long |> 
+  left_join(metadata, by = c("country_name" = "table_name","country_code" = "country_code"))
+```
+
+## 5. AGREGACION
+```{r}
+hipotesis <- datos_df |> filter(year >= 2013 & year <=2023) |> filter(income_group %in% c("Low income", "Lower middle income", "Upper middle income", "High income")) |>
+group_by(region, year, income_group) |> 
+  summarize(
+    promedio_internet = mean(internet_users, na.rm = TRUE),
+    .groups = "drop")
+```
+
+
 
 
