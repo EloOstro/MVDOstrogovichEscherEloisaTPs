@@ -54,3 +54,7 @@ for(link in total_links){
   id <- id + 1
   }
 
+df_oea <- bind_rows(tabla)
+saveRDS(df_oea, here("TP2/data/tabla_scraping_oea.rds"))
+
+message("Se guardó 'tabla_scraping_oea.rds' en /data")
