@@ -14,7 +14,7 @@ A partir de esto, planteo la siguiente pregunta: ¿Qué temas y conceptos aparec
 
 ### Scraping
 
-El script "scraping_oea.r" recorre los links mensuales de la OEA que se le especificaron, identificando elnaces válidos y descargando cada comunicado. De cada uno se extrae el título y el cuerpo del texto, guardando tanto el HTML crudo como una tabla consolidada en formato .rds.
+El script "scraping_oea.r" recorre los links mensuales de la OEA que se le especificaron, identificando elnaces válidos y descargando cada comunicado. De cada uno se extrae el título y el cuerpo del texto, guardando tanto el HTML crudo como una tabla consolidada en formato .*rds*.
 
 ### Procesamiento y lematización
 
