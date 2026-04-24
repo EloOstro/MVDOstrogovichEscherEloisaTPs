@@ -17,12 +17,12 @@ palabras_clave <- c("democracia", "derecho", "estado", "seguridad", "mujer")
 top5 <- frecuencia %>%
   filter(palabra %in% palabras_clave)
 
-# Creacion de grafico
+# Creacion de grafico de barras
 message("Generando grafico")
 grafico_oea <- ggplot(top5, aes(x = reorder(palabra, n), y = n, fill = palabra)) +
   geom_col(show.legend = FALSE, width = 0.7) +
   geom_text(aes(label = n), hjust = -0.2, size = 4) +
-  coord_flip() + # Barras horizontales para mejor lectura
+  coord_flip() + # Barras horizontales
   theme_minimal() +
   scale_fill_brewer(palette = "Set1") +
   labs(
