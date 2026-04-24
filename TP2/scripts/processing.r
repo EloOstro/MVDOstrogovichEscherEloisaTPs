@@ -13,7 +13,7 @@ df_tabla <- readRDS(here("TP2/data/tabla_scraping_oea.rds"))
 # Limpieza del texto
 message("Realizando limpieza del texto")
 
-# Normalizacion del texto
+# Normalizacion del texto del scraping
 df_tabla <- df_tabla %>%
   mutate(texto = str_to_lower(cuerpo),
          texto = str_remove_all(texto, "[0-9]+"),
