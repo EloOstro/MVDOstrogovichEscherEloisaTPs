@@ -3,6 +3,7 @@ library(tidytext)
 library(here)
 library(ggplot2)
 
+# Lectura del texto y carga de base
 message("Lectura del archivo")
 lem <- readRDS(here("TP2/output/processed_text.rds"))
 
@@ -10,20 +11,16 @@ lem <- readRDS(here("TP2/output/processed_text.rds"))
 frecuencia <- lem %>%
   count(palabra, sort = TRUE)
 
-# Ver palabras mas frecuentes
-head(frecuencia, 30)
-
-palabras_clave <- c("oea", "misión", "proceso", "organización", "electoral")
+# Seleccion de posibles palabras relevantes de la OEA
+palabras_clave <- c("democracia", "derecho", "estado", "seguridad", "mujer")
 
 top5 <- frecuencia %>%
   filter(palabra %in% palabras_clave)
 
+# Creacion de grafico
 message("Generando grafico")
-
-# Grafico
 grafico_oea <- ggplot(top5, aes(x = reorder(palabra, n), y = n, fill = palabra)) +
   geom_col(show.legend = FALSE, width = 0.7) +
-  # Agregamos etiquetas de datos arriba de las barras
   geom_text(aes(label = n), hjust = -0.2, size = 4) +
   coord_flip() + # Barras horizontales para mejor lectura
   theme_minimal() +
@@ -33,9 +30,22 @@ grafico_oea <- ggplot(top5, aes(x = reorder(palabra, n), y = n, fill = palabra))
     subtitle = "Comunicados de Prensa OEA (Enero - Abril 2026)",
     x = "Términos seleccionados",
     y = "Cantidad de menciones totales",
-    caption = "Fuente: Scraping automatizado de OAS.org - TP2 Martina Boba Fernandez"
+    caption = "Scraping automatizado de OEA"
   ) +
-  # Ajustamos los límites para que no se corten los números
   expand_limits(y = max(top5$n) * 1.1)
 
 print(grafico_oea)
+
+# Guardado del gráfico
+message("Guardando gráfico")
+
+grafico_output <- here("TP2/output/frecuencia_terminos.png")
+message("Figura guardada en /output")
+
+ggsave(
+  filename = grafico_output,
+  plot = grafico_oea,
+  width = 10,
+  height = 6,
+  dpi = 300)
+
