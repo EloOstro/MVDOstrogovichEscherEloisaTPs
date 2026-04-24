@@ -28,12 +28,25 @@ modelo_ud <- udpipe_load_model(modelo$file_model)
 anotado <- udpipe_annotate(modelo_ud, x = df_tabla$texto)
 df_lem <- as_tibble(anotado)
 
-df_lem <- df_lem %>%
-  select(doc_id, lemma) %>%
-  filter(!is.na(lemma))
+tokens <- df_lem %>%
+  filter(upos %in% c("NOUN", "VERB", "ADJ")) %>%  # primero filtrás por tipo
+  filter(!is.na(lemma)) %>%
+  transmute(
+    id = doc_id,
+    palabra = str_to_lower(lemma))
 
 # Punto c. remover stopwords
+message("Removiendo stopwords")
 
+lista_palabras <- get_stopwords("es")
 
+texto_nuevo <- tokens %>%
+  anti_join(lista_palabras, by = c("palabra" = "word")) %>%
+  # Limpieza extra: filtramos palabras muy cortas que suelen ser ruidos del scraping
+  filter(nchar(palabra) > 2)
 
+# Guardar tabla final
+saveRDS(texto_nuevo, here("TP2/output/processed_text.rds"))
+
+message("Se guardó 'processed_text.rds' en /output")
 
