@@ -6,11 +6,11 @@ library(xml2)
 ## Primer mensaje
 message("Iniciando scraping OEA")
 
-## Configuracion de la base
+## Configuracion de la base 
 meses <- 1:4 # Selecciona los meses que se van a analizar
 total_links <- c() # Carpeta en donde se van a guardar los links
 
-# Recorrido de las paginas
+# Recorrido de las paginas de OEA
 for(mes in meses){
   url <- paste0("https://www.oas.org/es/centro_noticias/comunicados_prensa.asp?nMes=", mes, "&nAnio=2026") # Se arma el link con la restriccion mensual y anual
   message("Leyendo mes: ", mes)
