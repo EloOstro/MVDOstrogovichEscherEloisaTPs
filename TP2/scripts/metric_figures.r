@@ -1,11 +1,19 @@
+install.packages("tm")
+
 library(tidyverse)
 library(tidytext)
 library(here)
 library(ggplot2)
+library(tm)
 
 # Lectura del texto y carga de base
 message("Lectura del archivo")
 lem <- readRDS(here("TP2/output/processed_text.rds"))
+
+# Matriz DTM 
+dtm_oea <- lem %>%
+  count(id, palabra) %>%
+  cast_dtm(document = id, term = palabra, value = n)
 
 # Matriz de frecuencia de terminos
 frecuencia <- lem %>%
