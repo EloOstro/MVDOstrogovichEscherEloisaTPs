@@ -34,6 +34,10 @@ source(here("TP2/scripts/processing.r"))
 source(here("TP2/scripts/metric_figures.r"))
 ```
 
+## Gráfico de Resultados
+
+![Frecuencia de términos institucionales en comunicados de la OEA](../output/frecuencia_terminos.png)
+
 ## Conclusión
 
 La figura muestra la frecuencia de aparición de cinco conceptos seleccionados por su relevancia dentro del discurso de la OEA, las palabras seleccionadas fueron democracia, derecho, estado, seguridad y mujer. La importancia de estos términos muestra que el discurso institucional del organismo durante el período analizado se estructura alrededor de la defensa del orden democrático, el fortalecimiento del Estado de derecho, la preocupación por la seguridad regional y la inclusión de la perspectiva de género.
