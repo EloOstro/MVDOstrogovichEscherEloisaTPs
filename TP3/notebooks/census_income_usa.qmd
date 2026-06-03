@@ -1,0 +1,55 @@
+---
+title: "TP 3"
+format: html
+editor: visual
+---
+
+## Carga de librerías
+
+```{r}
+library(pacman)
+library(here)
+library(readr)
+library(tidyverse)
+```
+
+## Carga de datos
+
+```{r}
+censo <- read.csv(
+  here("TP3", "data", "adult_census_USA.csv"))
+```
+
+## Transformación de variable
+
+```{r}
+censo <- censo %>%
+  mutate(
+    income = factor(income, levels = c("<=50K", ">50K"))
+  )
+```
+
+## Limpieza de base
+
+```{r}
+censo <- censo %>%
+  select(
+    age, education_num, marital_status, race, sex, hours_per_week, income) %>% 
+  mutate(
+    marital_status = if_else(
+      marital_status %in% c(
+        "Married-civ-spouse",
+        "Married-spouse-absent",
+        "Married-AF-spouse"),
+      "married",
+      "single"))
+```
+
+## Verificación de balance 
+
+```{r}
+summary(censo)
+```
+
+
+

@@ -1,7 +1,6 @@
 ---
 title: "TP2 - Eloisa Ostrogovich Escher"
 format: html
-editor: visual
 ---
 
 ## Introducción
