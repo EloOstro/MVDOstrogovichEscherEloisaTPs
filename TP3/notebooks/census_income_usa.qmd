@@ -1,16 +1,36 @@
 ---
-title: "TP 3"
-format: html
-editor: visual
+title: "TP3 - Eloisa Ostrogovich Escher"
+date: "`r Sys.Date()`"
+lang: es
+execute:
+  echo: true
+  output: true
+  eval: true
+  cache: true
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-title: "Contenidos"
+    embed-resources: true
+    theme: cosmo
+    code-fold: false
+    code-tools: true
+    df-print: paged
+    include-in-header:
+      text: |
+        <style>
+        body {
+          text-align: justify;
+        }
+        </style>
 ---
 
 ## Carga de librerías
 
 ```{r}
 library(pacman)
-library(here)
-library(readr)
-library(tidyverse)
+p_load(here, readr, tidyverse)
 ```
 
 ## Carga de datos
@@ -45,11 +65,48 @@ censo <- censo %>%
       "single"))
 ```
 
-## Verificación de balance 
+## Verificación de balance
 
 ```{r}
-summary(censo)
+prop.table(table(censo$income))
 ```
 
+## Visualizaciones bivariadas
 
+```{r}
+ggplot(censo, aes(x = sex, fill = income)) +
+  geom_bar(position = "fill") +
+  labs(
+    title = "Distribución de Ingresos según Género",
+    x = "Género",
+    y = "Proporción",
+    fill = "Ingresos"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(censo, aes(x = income, y = hours_per_week, fill = income)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Horas Trabajadas por Semana según Nivel de Ingresos",
+    x = "Ingresos",
+    y = "Horas por Semana"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(censo, aes(x = marital_status, fill = income)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~ sex) +
+  labs(
+    title = "Efecto de Interacción: Estado Civil y Género sobre el Ingreso",
+    x = "Estado Civil",
+    y = "Proporción",
+    fill = "Ingresos"
+  ) +
+  theme_minimal()
+```
 
