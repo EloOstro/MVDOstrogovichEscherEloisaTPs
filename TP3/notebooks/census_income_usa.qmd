@@ -113,7 +113,6 @@ ggplot(censo, aes(x = marital_status, fill = income)) +
 ## Regresión logística
 
 ### Modelo 1
-
 ```{r}
 modelo_base <- glm(income ~ age + education_num + marital_status + race + sex + hours_per_week,
                    data = censo, family = binomial)
@@ -123,7 +122,6 @@ stargazer::stargazer(modelo_base, type = "text", star.cutoffs = c(0.05, 0.01, 0.
 ```
 
 ### Modelo 2
-
 ```{r}
 modelo_interativo <- glm(income ~ age + education_num + marital_status*sex + race + hours_per_week, 
                          data = censo, family = binomial)
@@ -190,7 +188,7 @@ ggplot(coeficientes_plot,
          y = reorder(etiqueta, estimado),
          color = significativo)) +
   geom_vline(
-    xintercept = 0,
+    xintercept = 1,
     linetype   = "dashed",
     color      = "gray40",
     linewidth  = 0.7) +
@@ -224,3 +222,24 @@ ggplot(coeficientes_plot,
     panel.grid.minor = element_blank(),
     panel.grid.major.y = element_blank())
 ```
+
+## Comparación Global de Modelos
+
+```{r}
+comp_global <- bind_rows(
+  glance(modelo_base) %>%
+    mutate(modelo = "Modelo 1"),
+  glance(modelo_interativo) %>%
+    mutate(modelo = "Modelo 2")) %>%
+  mutate(
+    r2 = 1 - (deviance / null.deviance)) %>%
+  select(modelo, AIC, deviance, null.deviance, r2)
+
+comp_global %>%
+  kable(digits = 4,
+        col.names = c("Modelo", "AIC", "Deviance residual", "Deviance nula", "R²"),
+        caption = "Comparación global: Modelo 1 y Modelo 2") %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+
