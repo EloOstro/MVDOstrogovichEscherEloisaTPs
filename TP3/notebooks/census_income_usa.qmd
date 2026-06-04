@@ -110,3 +110,22 @@ ggplot(censo, aes(x = marital_status, fill = income)) +
   theme_minimal()
 ```
 
+## Regresión logística
+
+### Modelo 1
+```{r}
+modelo_base <- glm(income ~ age + education_num + marital_status + race + sex + hours_per_week,
+                   data = censo, family = binomial)
+
+summary(modelo_base)
+```
+
+### Modelo 2
+```{r}
+modelo_interativo <- glm(income ~ age + education_num + marital_status*sex + hours_per_week, 
+                         data = censo, family = binomial)
+
+summary(modelo_interativo)
+```
+
+
