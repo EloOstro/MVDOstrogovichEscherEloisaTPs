@@ -1,3 +1,5 @@
+# Trabajo Práctico 3 - Eloísa Ostrogovich Escher
+
 ---
 title: "TP3 - Eloisa Ostrogovich Escher"
 date: "`r Sys.Date()`"
@@ -74,7 +76,7 @@ prop.table(table(censo$income))
 ## Visualizaciones bivariadas
 
 ```{r}
-ggplot(censo, aes(x = sex, fill = income)) +
+grafico1 <- ggplot(censo, aes(x = sex, fill = income)) +
   geom_bar(position = "fill") +
   labs(
     title = "Distribución de Ingresos según Género",
@@ -83,10 +85,14 @@ ggplot(censo, aes(x = sex, fill = income)) +
     fill = "Ingresos"
   ) +
   theme_minimal()
+
+print(grafico1)
 ```
 
+![](../output/ingresos_genero.png)
+
 ```{r}
-ggplot(censo, aes(x = income, y = hours_per_week, fill = income)) +
+grafico2 <- ggplot(censo, aes(x = income, y = hours_per_week, fill = income)) +
   geom_boxplot(alpha = 0.7) +
   labs(
     title = "Horas Trabajadas por Semana según Nivel de Ingresos",
@@ -95,10 +101,14 @@ ggplot(censo, aes(x = income, y = hours_per_week, fill = income)) +
   ) +
   theme_minimal() +
   theme(legend.position = "none")
+
+print(grafico2)
 ```
 
+![](../output/horas_ingreso.png)
+
 ```{r}
-ggplot(censo, aes(x = marital_status, fill = income)) +
+grafico3 <- ggplot(censo, aes(x = marital_status, fill = income)) +
   geom_bar(position = "fill") +
   facet_wrap(~ sex) +
   labs(
@@ -108,11 +118,16 @@ ggplot(censo, aes(x = marital_status, fill = income)) +
     fill = "Ingresos"
   ) +
   theme_minimal()
+
+print(grafico3)
 ```
+
+![](../output/estadocivil_genero.png)
 
 ## Regresión logística
 
 ### Modelo 1
+
 ```{r}
 modelo_base <- glm(income ~ age + education_num + marital_status + race + sex + hours_per_week,
                    data = censo, family = binomial)
@@ -122,6 +137,7 @@ stargazer::stargazer(modelo_base, type = "text", star.cutoffs = c(0.05, 0.01, 0.
 ```
 
 ### Modelo 2
+
 ```{r}
 modelo_interativo <- glm(income ~ age + education_num + marital_status*sex + race + hours_per_week, 
                          data = censo, family = binomial)
@@ -133,6 +149,7 @@ stargazer::stargazer(modelo_interativo, type = "text", star.cutoffs = c(0.05, 0.
 ## Resultados y efectos marginales
 
 ### Tabla efectos marginales promedio (Modelo 2)
+
 ```{r}
 ame_modelo <- avg_slopes(modelo_interativo) %>%
   as_tibble() %>%
@@ -156,7 +173,14 @@ ame_modelo %>%
 
 ```
 
+Los Efectos Marginales Promedio (AME) permiten interpretar los coeficientes de la regresión logística en la escala de la variable dependiente, mostrando el cambio promedio en la probabilidad de tener ingresos superiores a los 50.000 dólares anuales ante variaciones en los predictores.
+
+Se seleccionaron tres variables continuas: Edad, Nivel Educativo y Horas semanales trabajadas. Estas variables indican que a un incremento de cada una de ellas, incrementa el promedio de ingresos anuales.
+
+Para la variable categórica se seleccionó el Estado Civil y la interaccion con el género, indicando que una persona soltera tiene menos probabilidad de ganar 50.00 dólares anuales que una persona casada.
+
 ### Gráfico *forest plot*
+
 ```{r}
 coeficientes_plot <- broom::tidy(modelo_interativo) %>%
   filter(term != "(Intercept)") %>%
@@ -223,6 +247,12 @@ ggplot(coeficientes_plot,
     panel.grid.major.y = element_blank())
 ```
 
+![](../output/forest-plot.png)
+
+El *forest plot* permite evaluar la significancia estadística (mediante intervalos de confianza graduados al 80%, 95% y 99%) y la magnitud del efecto multiplicativo de cada variable sobre las chancesde ganar más de USD 50.000 USD. Las variables asociadas a la estructura socioeconómica tradicional resultan altamente significativas. Los años de educación y las horas trabajadas presentan un Odds Ratio superior a 1, indicando que aumentan las chances de altos ingresos de forma sostenida.
+
+Al incluir el término interactivo marital_status\*sex, el modelo nos permite descomponer cómo el estado civil afecta de manera disímil a hombres y mujeres. Ser hombre casado representa el efecto del género cuando la variable interactuante es cero (grupo de referencia: casados). Los hombres casados tienen ... veces las chances de las mujeres casadas de percibir un ingreso alto. Para las mujeres solteras as chances de una mujer soltera de ganar más de 50K se reducen significativamente. La interacción captura el efecto multiplicativo adicional de ser un hombre soltero. La estimación muestra que el impacto negativo de la soltería sobre las chances de altos ingresos es significativamente menor en la población masculina que en la femenina.
+
 ## Comparación Global de Modelos
 
 ```{r}
@@ -242,4 +272,4 @@ comp_global %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
-
+La inclusión de la interacción entre el estado civil y el género mejora significativamente el modelo. La reducción del AIC y el incremento del R² evidencian que la relación entre las características demográficas y el nivel de ingresos no es puramente aditiva. El modelo interactivo captura mejor la estructura del mercado laboral, demostrando que las disparidades de ingresos por género están fuertemente condicionadas por el estado civil de los individuos.
