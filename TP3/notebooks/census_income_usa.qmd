@@ -30,7 +30,7 @@ format:
 
 ```{r}
 library(pacman)
-p_load(here, readr, tidyverse)
+p_load(here, readr, tidyverse, kableExtra, broom, modelsummary, marginaleffects)
 ```
 
 ## Carga de datos
@@ -113,19 +113,114 @@ ggplot(censo, aes(x = marital_status, fill = income)) +
 ## Regresión logística
 
 ### Modelo 1
+
 ```{r}
 modelo_base <- glm(income ~ age + education_num + marital_status + race + sex + hours_per_week,
                    data = censo, family = binomial)
 
-summary(modelo_base)
+stargazer::stargazer(modelo_base, type = "text", star.cutoffs = c(0.05, 0.01, 0.001), 
+                     report = "vc*sp", no.space = T)
 ```
 
 ### Modelo 2
+
 ```{r}
-modelo_interativo <- glm(income ~ age + education_num + marital_status*sex + hours_per_week, 
+modelo_interativo <- glm(income ~ age + education_num + marital_status*sex + race + hours_per_week, 
                          data = censo, family = binomial)
 
-summary(modelo_interativo)
+stargazer::stargazer(modelo_interativo, type = "text", star.cutoffs = c(0.05, 0.01, 0.001), 
+                     report = "vc*sp", no.space = T)
 ```
 
+## Resultados y efectos marginales
 
+### Tabla efectos marginales promedio (Modelo 2)
+```{r}
+ame_modelo <- avg_slopes(modelo_interativo) %>%
+  as_tibble() %>%
+  select(term, contrast, estimate, std.error, p.value, conf.low, conf.high) %>%
+  mutate(term = case_match(
+    term,
+    "age"            ~ "Edad (Años)",
+    "education_num"  ~ "Nivel Educativo (Años)",
+    "marital_status" ~ "Estado Civil",
+    "sex"            ~ "Género",
+    "hours_per_week" ~ "Horas Trabajadas por Semana",
+    "race"           ~ "Etnia"))
+
+ame_modelo %>%
+  knitr::kable(
+    caption = "Tabla 2. Efectos Marginales Promedio (AME) — Modelo 2 (Interactivo)",
+    digits  = 4,
+    format  = "html",
+    align   = c("l", "l", rep("c", 5))) %>%
+  kableExtra::row_spec(0, bold = TRUE, background = "gray", color = "white")
+
+```
+
+### Gráfico *forest plot*
+```{r}
+coeficientes_plot <- broom::tidy(modelo_interativo) %>%
+  filter(term != "(Intercept)") %>%
+  mutate(
+    estimado      = exp(estimate),
+    low_99  = exp(estimate - 2.576 * std.error),
+    high_99 = exp(estimate + 2.576 * std.error),
+    low_95  = exp(estimate - 1.96 * std.error),
+    high_95 = exp(estimate + 1.96 * std.error),
+    low_80  = exp(estimate - 1.282 * std.error),
+    high_80 = exp(estimate + 1.282 * std.error),
+    etiqueta = case_match(
+      term,
+      "age"                           ~ "Edad (Años)",
+      "education_num"                 ~ "Nivel Educativo (Años)",
+      "hours_per_week"                ~ "Horas semanales trabajadas",
+      "marital_statussingle"          ~ "Estado Civil: Soltero/a",
+      "sexMale"                       ~ "Género: Masculino",
+      "raceAsian-Pac-Islander"        ~ "Raza: Asiático/Isleño",
+      "raceAmer-Indian-Eskimo"        ~ "Raza: Amerindio/Eskimo",
+      "raceOther"                     ~ "Raza: Otra",
+      "raceWhite"                     ~ "Raza: Blanco",
+      "marital_statussingle:sexMale"  ~ "Interacción: Soltero × Masculino"),
+    significativo = ifelse(p.value < 0.05, "Sig. (p<0.05)", "No sig."))
+
+ggplot(coeficientes_plot,
+       aes(
+         x = estimado,
+         y = reorder(etiqueta, estimado),
+         color = significativo)) +
+  geom_vline(
+    xintercept = 0,
+    linetype   = "dashed",
+    color      = "gray40",
+    linewidth  = 0.7) +
+  geom_linerange(
+    aes(xmin = low_99, xmax = high_99),
+    linewidth = 0.6, alpha = 0.5) +
+  geom_linerange(
+    aes(xmin = low_95, xmax = high_95),
+    linewidth = 1.4, alpha = 0.8) +
+  geom_linerange(
+    aes(xmin = low_80, xmax = high_80),
+    linewidth = 2.6) +
+  geom_point(size = 3) +
+  scale_color_manual(
+    values = c("Sig. (p<0.05)" = "#08519C", "No sig." = "#CB181D"),
+    name   = "Significancia") +
+  scale_x_log10() +
+  labs(
+    title    = "Forest Plot - Modelo Interactivo",
+    subtitle = "Odds Ratios con barras de error graduadas (80%, 95% y 99%). Censo USA",
+    x        = "Odds Ratio (Escala Logarítmica)",
+    y        = NULL,) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title       = element_text(face = "bold", size = 15),
+    plot.subtitle    = element_text(size = 12, color = "gray40"),
+    axis.text.y      = element_text(size = 12),
+    axis.text.x      = element_text(size = 12),
+    legend.position  = "bottom",
+    legend.title     = element_text(size = 11, face = "bold"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank())
+```
