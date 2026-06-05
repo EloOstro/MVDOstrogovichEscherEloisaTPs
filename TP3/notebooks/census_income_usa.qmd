@@ -89,6 +89,8 @@ grafico1 <- ggplot(censo, aes(x = sex, fill = income)) +
 print(grafico1)
 ```
 
+Este primer gráfico permite ver la relación entre el género y la probabilidad de pertenecer al grupo de ingresos mayores a 50.000 dólares. El gráfico muestra una alta brecha de ingresos según el género, donde hay más hombres en el grupo de ingresos altos que mujeres, sugiriendo que el género es un predictor importante para predecir el nivel de ingresos.
+
 ```{r}
 grafico2 <- ggplot(censo, aes(x = income, y = hours_per_week, fill = income)) +
   geom_boxplot(alpha = 0.7) +
@@ -102,6 +104,8 @@ grafico2 <- ggplot(censo, aes(x = income, y = hours_per_week, fill = income)) +
 
 print(grafico2)
 ```
+
+En este segundo gráfico muestra la distribución de la jornada laboral según ambas categorías de ingresos. La mediana del grupo de ingresos bajos se ubica alrededor de las 40 horas semanales, mientras que el grupo de ingresos altos se ubica claramente por encima de los ingresos bajos, indicando jornadas laborales mas extendidas. El grupo de menores ingresos presenta una dispersión mayor hacia abajo, reflejando la presencia de empleos de tiempo parcial
 
 ```{r}
 grafico3 <- ggplot(censo, aes(x = marital_status, fill = income)) +
@@ -118,6 +122,8 @@ grafico3 <- ggplot(censo, aes(x = marital_status, fill = income)) +
 print(grafico3)
 ```
 
+Por ultimo, este gráfico muestra como se distribuye el ingreso según el estado civil y el género. En el panel de los hombres, pasar de casado a soltero genera una caída drástica y severa en la proporción de personas con ingresos superiores a 50K. Los hombres casados registran los niveles de ingresos altos más elevados de toda la muestra. En el panel de las mujeres, las casadas también tienen proporcionalmente más ingresos altos que las solteras, pero la diferencia entre ambas barras es mucho más pequeña y atenuada. El efecto de estar soltero o casado sobre el nivel de ingresos depende del género del individuo, ya que el impacto es similar en ambos grupos.
+
 ## Regresión logística
 
 ### Modelo 1
@@ -130,6 +136,8 @@ stargazer::stargazer(modelo_base, type = "text", star.cutoffs = c(0.05, 0.01, 0.
                      report = "vc*sp", no.space = T)
 ```
 
+Los coeficientes para age, education_num, sexMale y hours_per_week son positivos y altamente significativos. Esto indica que a mayor edad, más años de educación formal y más horas dedicadas al trabajo a la semana, se incrementan las log-odds y la probabilidad de pertenecer al grupo de ingresos altos. El coeficiente de marital_statussingle es negativo y muy significativo, confirmando la disminución de ingresos asociada a la soltería bajo este modelo.
+
 ### Modelo 2
 
 ```{r}
@@ -139,6 +147,8 @@ modelo_interativo <- glm(income ~ age + education_num + marital_status*sex + rac
 stargazer::stargazer(modelo_interativo, type = "text", star.cutoffs = c(0.05, 0.01, 0.001), 
                      report = "vc*sp", no.space = T)
 ```
+
+Este segundo modelo muestra que el efecto sobre el nivel de ingresos está condicionado por el estado civil. Las chances de recibir ingresos mayores a los 50K para los hombres es mayor entre las personas solteras que entre las personas casadas. Esto demuestra que la brecha de ingresos a favor de los varones se amplifica de manera significativa dentro del segmento de la población soltera, manteniendo constantes las demás variables de control.
 
 ## Resultados y efectos marginales
 
@@ -167,11 +177,7 @@ ame_modelo %>%
 
 ```
 
-Los Efectos Marginales Promedio (AME) permiten interpretar los coeficientes de la regresión logística en la escala de la variable dependiente, mostrando el cambio promedio en la probabilidad de tener ingresos superiores a los 50.000 dólares anuales ante variaciones en los predictores.
-
-Se seleccionaron tres variables continuas: Edad, Nivel Educativo y Horas semanales trabajadas. Estas variables indican que a un incremento de cada una de ellas, incrementa el promedio de ingresos anuales.
-
-Para la variable categórica se seleccionó el Estado Civil y la interaccion con el género, indicando que una persona soltera tiene menos probabilidad de ganar 50.00 dólares anuales que una persona casada.
+Los Efectos Marginales Promedio (AME) permiten interpretar los coeficientes de la regresión logística en la escala de la variable dependiente, mostrando el cambio promedio en la probabilidad de tener ingresos superiores a los 50.000 dólares anuales ante variaciones en los predictores. Se seleccionaron tres variables continuas: Edad, Nivel Educativo y Horas semanales trabajadas. Estas variables indican que a un incremento de cada una de ellas, incrementa el promedio de ingresos anuales. Cada año adicional de educación formal incrementa, en promedio, la probabilidad de ganar más de USD 50K en los puntos porcentuales indicados por su estimación. Por otro lado, cada hora extra añadida a la jornada laboral semanal aumenta la probabilidad de ingresos altos. Por ultimo, las personas solteras tienen una probabilidad significativamente menor que las casadas, y los hombres una probabilidad mayor que las mujeres, controlando por el resto de las variables.
 
 ### Gráfico *forest plot*
 
@@ -241,9 +247,7 @@ ggplot(coeficientes_plot,
     panel.grid.major.y = element_blank())
 ```
 
-El *forest plot* permite evaluar la significancia estadística (mediante intervalos de confianza graduados al 80%, 95% y 99%) y la magnitud del efecto multiplicativo de cada variable sobre las chancesde ganar más de USD 50.000 USD. Las variables asociadas a la estructura socioeconómica tradicional resultan altamente significativas. Los años de educación y las horas trabajadas presentan un Odds Ratio superior a 1, indicando que aumentan las chances de altos ingresos de forma sostenida.
-
-Al incluir el término interactivo marital_status\*sex, el modelo nos permite descomponer cómo el estado civil afecta de manera disímil a hombres y mujeres. Ser hombre casado representa el efecto del género cuando la variable interactuante es cero (grupo de referencia: casados). Los hombres casados tienen ... veces las chances de las mujeres casadas de percibir un ingreso alto. Para las mujeres solteras as chances de una mujer soltera de ganar más de 50K se reducen significativamente. La interacción captura el efecto multiplicativo adicional de ser un hombre soltero. La estimación muestra que el impacto negativo de la soltería sobre las chances de altos ingresos es significativamente menor en la población masculina que en la femenina.
+El *forest plot* permite evaluar la significancia estadística (mediante intervalos de confianza graduados al 80%, 95% y 99%) y la magnitud del efecto multiplicativo de cada variable sobre las chancesde ganar más de USD 50.000 USD. Las variables asociadas a la estructura socioeconómica tradicional resultan altamente significativas. Los años de educación y las horas trabajadas presentan un Odds Ratio superior a 1, indicando que aumentan las chances de altos ingresos de forma sostenida. Las variables Nivel Educativo, Horas semanales trabajadas y Edad muestran puntos significativamente desplazados hacia la derecha del umbral. Esto indica de forma que incrementos en estas variables aumentan las chances de pertenecer al grupo de altos ingresos Al incluir el término interactivo marital_status\*sex, el modelo nos permite mostrar cómo el estado civil afecta a hombres y mujeres. Ser hombre casado representa el efecto del género cuando la variable interactuante es cero. Los hombres casados tienen más chances de las mujeres casadas de recibir un ingreso alto. Para las mujeres solteras as chances de una mujer soltera de ganar más de 50K se reducen significativamente. La interacción captura el efecto multiplicativo adicional de ser un hombre soltero. La estimación muestra que el impacto negativo de la soltería sobre las chances de altos ingresos es significativamente menor en la población masculina que en la femenina.
 
 ## Comparación Global de Modelos
 
