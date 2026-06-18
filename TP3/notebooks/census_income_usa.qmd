@@ -107,26 +107,14 @@ print(grafico2)
 
 En este segundo gráfico muestra la distribución de la jornada laboral según ambas categorías de ingresos. La mediana del grupo de ingresos bajos se ubica alrededor de las 40 horas semanales, mientras que el grupo de ingresos altos se ubica claramente por encima de los ingresos bajos, indicando jornadas laborales mas extendidas. El grupo de menores ingresos presenta una dispersión mayor hacia abajo, reflejando la presencia de empleos de tiempo parcial
 
-```{r}
-grafico3 <- ggplot(censo, aes(x = marital_status, fill = income)) +
-  geom_bar(position = "fill") +
-  facet_wrap(~ sex) +
-  labs(
-    title = "Efecto de Interacción: Estado Civil y Género sobre el Ingreso",
-    x = "Estado Civil",
-    y = "Proporción",
-    fill = "Ingresos"
-  ) +
-  theme_minimal()
-
-print(grafico3)
-```
-
-Este gráfico muestra como se distribuye el ingreso según el estado civil y el género. En el panel de los hombres, pasar de casado a soltero genera una caída drástica y severa en la proporción de personas con ingresos superiores a 50K. Los hombres casados registran los niveles de ingresos altos más elevados de toda la muestra. En el panel de las mujeres, las casadas también tienen proporcionalmente más ingresos altos que las solteras, pero la diferencia entre ambas barras es mucho más pequeña y atenuada. El efecto de estar soltero o casado sobre el nivel de ingresos depende del género del individuo, ya que el impacto es similar en ambos grupos.
 
 ```{r}
 grafico4 <- ggplot(censo, aes(x = income, y = age, fill = income)) +
   geom_boxplot() +
+  labs(
+    title = "Edad por nivel de ingreso",
+    x = "Ingreso",
+    y = "Edad") +
   theme_minimal()
 
 print(grafico4)
@@ -137,6 +125,10 @@ El gráfico hace una comparación entre la edad y el ingreso, mostrando que las 
 ```{r}
 grafico5 <- ggplot(censo, aes(x = income, y = education_num, fill = income)) +
   geom_boxplot() +
+  labs(
+    title = "Nivel educativo por grupo de ingresos",
+    x = "Ingreso",
+    y = "Nivel educativo") +
   theme_minimal()
 
 print(grafico5)
@@ -147,6 +139,10 @@ Este gráfico compara el nivel educativo con el grupo de ingresos, indicando que
 ```{r}
 grafico6 <- ggplot(censo, aes(x = race, fill = income)) +
   geom_bar(position = "fill") +
+  labs(
+    title = "Grupo etnico e ingresos", 
+    x = "Grupo étnico",
+    y = "Cantidad por nivel de ingreso") +
   theme_minimal()
 
 print(grafico6)
