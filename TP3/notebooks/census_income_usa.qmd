@@ -122,7 +122,59 @@ grafico3 <- ggplot(censo, aes(x = marital_status, fill = income)) +
 print(grafico3)
 ```
 
-Por ultimo, este gráfico muestra como se distribuye el ingreso según el estado civil y el género. En el panel de los hombres, pasar de casado a soltero genera una caída drástica y severa en la proporción de personas con ingresos superiores a 50K. Los hombres casados registran los niveles de ingresos altos más elevados de toda la muestra. En el panel de las mujeres, las casadas también tienen proporcionalmente más ingresos altos que las solteras, pero la diferencia entre ambas barras es mucho más pequeña y atenuada. El efecto de estar soltero o casado sobre el nivel de ingresos depende del género del individuo, ya que el impacto es similar en ambos grupos.
+Este gráfico muestra como se distribuye el ingreso según el estado civil y el género. En el panel de los hombres, pasar de casado a soltero genera una caída drástica y severa en la proporción de personas con ingresos superiores a 50K. Los hombres casados registran los niveles de ingresos altos más elevados de toda la muestra. En el panel de las mujeres, las casadas también tienen proporcionalmente más ingresos altos que las solteras, pero la diferencia entre ambas barras es mucho más pequeña y atenuada. El efecto de estar soltero o casado sobre el nivel de ingresos depende del género del individuo, ya que el impacto es similar en ambos grupos.
+
+```{r}
+grafico4 <- ggplot(censo, aes(x = income, y = age, fill = income)) +
+  geom_boxplot() +
+  theme_minimal()
+
+print(grafico4)
+```
+
+El gráfico hace una comparación entre la edad y el ingreso, mostrando que las personas con ingresos superiores a 50K presentan una edad media mayor. Esto muestra una asociación positiva entre los años e trabajo y el nivel de ingresos. 
+
+```{r}
+grafico5 <- ggplot(censo, aes(x = income, y = education_num, fill = income)) +
+  geom_boxplot() +
+  theme_minimal()
+
+print(grafico5)
+```
+
+Este gráfico compara el nivel educativo con el grupo de ingresos, indicando que las personas con ingresos mayores a 50K tienen mas años de educación. 
+
+```{r}
+grafico6 <- ggplot(censo, aes(x = race, fill = income)) +
+  geom_bar(position = "fill") +
+  theme_minimal()
+
+print(grafico6)
+```
+
+Por último, se compara el grupo etnico con el nivel de ingresos. El gráfico indica diferencias entre los ingresos y la etnia de las personas, mostrando en líneas generales una proporción grande de todos los grupos étnicos de ingresos menores a 50K.  
+
+## Distribución de ingreso y marital status
+
+```{r}
+ingreso_marital <- ggplot(censo, aes(x = income, fill = marital_status)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~ sex) +
+  labs(
+    title = "Distribución del estado civil según nivel de ingresos y sexo",
+    x = "Nivel de ingresos",
+    y = "Proporción",
+    fill = "Estado civil"
+  ) +
+  theme_minimal()
+
+print(ingreso_marital)
+```
+
+El gráfico muestra la composición del estado civil para ambos niveles de ingresos no es el mismo para hombres que para mujeres.
+La mayoría de las mujeres con ingresos menores a 50K se encuentran solteras, mientras que para las mujeres casadas aumenta la proporción de ingresos mayores a 50K. Esto demuestra que estar casada se asocia con un aumento de ingresos entre las mujeres. 
+Del lado de los hombres, se observa una situación similar al de las mujeres, pero en menor medida. El grupo de ingresos menores a 50K muestra una distribución pareja entre ambos estados civiles, mientras que para el grupo de ingresos mayores a 50K la proporcion de hombres solteras es significativamente pequeña.
+En ambos géneros podemos observar que estar casado aumenta la proporción de ingresos de las personas. 
 
 ## Regresión logística
 
